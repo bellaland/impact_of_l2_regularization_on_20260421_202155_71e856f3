@@ -1,0 +1,8 @@
+PDF: papers/krogh_hertz_1991_simple_weight_decay.pdf
+Total pages: 8
+Pages per chunk: 3
+
+Chunks:
+  krogh_hertz_1991_simple_weight_decay_chunk_001.pdf: pages 1-3
+  krogh_hertz_1991_simple_weight_decay_chunk_002.pdf: pages 4-6
+  krogh_hertz_1991_simple_weight_decay_chunk_003.pdf: pages 7-8

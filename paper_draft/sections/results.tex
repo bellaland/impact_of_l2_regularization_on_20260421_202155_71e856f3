@@ -1,0 +1,32 @@
+\section{Results}
+\label{sec:results}
+
+\para{Aggregate comparison.} \Tabref{tab:aggregate-results} shows the main aggregate outcome. L2 increases mean test accuracy from $0.8292$ to $0.8385$, but the mean paired gain is only $+0.0093$ with a $95\%$ confidence interval of $[-0.0114, 0.0300]$ and $p=0.345$. Weighted F1 shows the same pattern: a small mean gain of $+0.0081$ with $p=0.431$. In contrast, the train-validation gap drops from $0.1297$ to $0.0257$, a mean paired change of $-0.1040$ with $p=0.011$ and paired Cohen's $d=-0.878$. This is the clearest statistically supported effect in the study.
+
+\input{tables/aggregate_results}
+
+\para{Per-dataset behavior.} \Tabref{tab:dataset-results} shows that the aggregate average hides substantial dataset heterogeneity. \breastcancer and \wine both favor L2 on accuracy and weighted F1, with \wine reaching perfect mean test accuracy under the selected settings. \sonar and \glass show the opposite pattern: L2 shrinks the train-validation gap strongly but does not improve mean test accuracy. This split is important because it shows that reduced overfitting pressure does not automatically imply better test performance.
+
+\input{tables/dataset_results}
+
+\para{How consistent is the overfitting reduction?} The run-level counts sharpen the interpretation. L2 improves test accuracy in $5/12$ runs, matches the baseline in $4/12$, and worsens it in $3/12$. By contrast, it reduces the train-validation gap in $11/12$ runs. The regularization effect is therefore far more stable for shrinkage and gap control than for final predictive accuracy.
+
+\para{Regularization sweep and shrinkage.} \Figref{fig:reg-summary} summarizes the validation sweep. The wine example shows that intermediate values of $C$ can reach perfect validation and test performance while keeping coefficients much smaller than the near-unregularized baseline. Across datasets, the selected median $C$ values vary from $0.01$ on \wine to $100$ on \glass, which reinforces that the best amount of regularization is data dependent rather than universal.
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/regularization_summary.png}
+    \caption{Regularization summary figure from the experiment artifacts. \figleft shows train and validation curves on \wine across the L2 sweep. \figcenter shows coefficient shrinkage along the same path. \figright aggregates validation weighted F1 as a function of $C$ across datasets. The figure highlights the central pattern of the paper: performance can improve at intermediate regularization strengths, but the location and size of the gain vary by dataset.}
+    \label{fig:reg-summary}
+\end{figure*}
+
+\para{Distribution of train-validation gaps.} \Figref{fig:gap-boxplot} shows the gap distribution by dataset. The largest contraction appears on \sonar, where the mean gap drops from $0.3011$ to $0.0486$. \glass also shows a large reduction, from $0.1408$ to $0.0455$. The visual pattern matches the paired test: L2 acts as a strong anti-overfitting mechanism even when accuracy gains are weak or absent.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/train_val_gap_boxplot.png}
+    \caption{Train-validation accuracy gap by dataset for the near-unregularized baseline and the validation-tuned L2 model. Lower is better. L2 reduces the gap for nearly every run and produces the clearest effect on the harder small datasets, especially \sonar and \glass.}
+    \label{fig:gap-boxplot}
+\end{figure}
+
+\para{Sensitivity analysis.} The L2 sweep also serves as a simple ablation on regularization strength. Extremely small $C$ values underfit, as expected, while very large $C$ values recover the high-norm near-unregularized regime. The useful region lies in between, but that region differs by dataset. This is consistent with our main conclusion: regularization helps most as a controllable bias-variance tradeoff, not as a uniform test-accuracy improvement.

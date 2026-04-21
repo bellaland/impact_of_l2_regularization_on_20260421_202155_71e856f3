@@ -1,0 +1,5 @@
+dataset,samples,features,target_column,n_classes,duplicates,missing_values
+sklearn_wine,178,13,target,3,0,0
+sklearn_breast_cancer,569,30,target,2,0,0
+uci_glass_identification,214,9,Type_of_glass,6,1,0
+uci_connectionist_bench_sonar,208,60,class,2,0,0

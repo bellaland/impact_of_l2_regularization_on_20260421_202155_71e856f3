@@ -1,0 +1,20 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Small tabular classification problems are common in applied machine learning, and they are exactly the setting where overfitting can dominate model selection. When a dataset has only a few hundred samples, a single validation split can make a method look either robust or unstable depending on the random seed. L2 regularization is often treated as a safe default in this regime, yet the practical question is narrower than that habit suggests: does L2 only shrink models, or does it also improve held-out performance in a consistent way?
+
+Classical theory motivates optimism. Weight decay prefers smaller-norm solutions and can suppress variance and noise fitting \cite{krogh1991simple}. Modern work, however, has made that story more conditional. The effect of L2 depends on optimization details \cite{loshchilov2019decoupled}, and explicit regularization alone does not explain generalization in modern models \cite{zhang2017understanding}. Recent papers also argue that regularization changes optimization dynamics and can be especially relevant in small-data or overtraining-prone settings \cite{power2022grokking,dangelo2024weight,golatkar2019time}. What is missing is a compact, repeated-seed measurement study focused on tiny real tabular datasets rather than vision benchmarks or synthetic tasks.
+
+We address that gap with a controlled benchmark on four classification datasets with fewer than 1000 samples. Our setup keeps the model family, preprocessing, solver, and split protocol fixed, and changes only the regularization strength. We compare a near-unregularized logistic regression baseline against a validation-tuned L2 logistic regression model, evaluate both on untouched test splits, and report both predictive metrics and direct overfitting indicators. This framing is intentionally modest: we do not ask whether L2 solves generalization in the abstract; we ask how much it changes accuracy, weighted F1, and train-validation gaps in a small-data tabular workflow.
+
+The answer is mixed. Across 12 dataset-seed pairs, L2 increases mean test accuracy by only $0.0093$ and weighted F1 by $0.0081$, with confidence intervals that cross zero. At the same time, it reduces the mean train-validation gap by $0.1040$ and does so in $11/12$ runs. This means the overfitting-control effect is strong and repeatable, while the accuracy effect is weaker and dataset-dependent.
+
+\para{What do we contribute?} We make four concrete contributions:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=2pt]
+    \item We conduct a repeated-seed comparison of near-unregularized and validation-tuned L2 logistic regression on four real small-data tabular benchmarks.
+    \item We separate predictive performance from overfitting control by reporting accuracy, weighted F1, train-validation gaps, train-test gaps, and coefficient norms.
+    \item We quantify aggregate and per-dataset effects with paired $t$-tests, confidence intervals, and paired Cohen's $d$ rather than relying on point estimates alone.
+    \item We provide a reproducible artifact-driven paper with figures, tables, and exact environment details for the measured setting.
+\end{itemize}
+
+The rest of the paper is organized as follows. \Secref{sec:related_work} positions our study in the L2 regularization literature. \Secref{sec:methodology} describes the experimental design. \Secref{sec:results} presents the aggregate and per-dataset findings, and \Secref{sec:discussion} interprets their implications and limitations before \Secref{sec:conclusion} concludes.

@@ -1,0 +1,48 @@
+{
+  "datasets": [
+    "sklearn_wine",
+    "sklearn_breast_cancer",
+    "uci_glass_identification",
+    "uci_connectionist_bench_sonar"
+  ],
+  "execution_time_seconds": 29.291561365127563,
+  "environment": {
+    "python_version": "3.12.8",
+    "platform": "Linux-6.12.54-linuxkit-x86_64-with-glibc2.35",
+    "numpy_version": "2.4.4",
+    "pandas_version": "3.0.2",
+    "scikit_learn_version": "1.8.0",
+    "scipy_version": "1.17.1",
+    "gpu": "NO_GPU",
+    "seeds": [
+      7,
+      21,
+      42
+    ],
+    "c_grid": [
+      0.0001,
+      0.0003,
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0,
+      3.0,
+      10.0,
+      30.0,
+      100.0,
+      300.0,
+      1000.0
+    ]
+  },
+  "output_files": {
+    "metrics_json": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/results/metrics.json",
+    "per_run_results_csv": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/results/per_run_results.csv",
+    "grid_results_csv": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/results/regularization_grid_results.csv",
+    "statistical_tests_json": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/results/statistical_tests.json",
+    "figure_regularization_summary": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/figures/regularization_summary.png",
+    "figure_gap_boxplot": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/figures/train_val_gap_boxplot.png"
+  }
+}

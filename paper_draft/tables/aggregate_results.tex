@@ -1,0 +1,16 @@
+\begin{table*}[t]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lccccccl@{}}
+        \toprule
+        Metric & Baseline Mean & L2 Mean & Mean Diff. ($\Delta$) & 95\% CI for $\Delta$ & $p$-value & Paired $d$ & Better \\
+        \midrule
+        Test accuracy & 0.8292 & {\bf 0.8385} & +0.0093 \increase & [$-0.0114$, $0.0300$] & 0.345 & 0.285 & L2 \\
+        Weighted F1 & 0.8276 & {\bf 0.8357} & +0.0081 \increase & [$-0.0138$, $0.0301$] & 0.431 & 0.236 & L2 \\
+        Train-val gap & 0.1297 & {\bf 0.0257} & -0.1040 \decrease & [$-0.1792$, $-0.0287$] & {\bf 0.011} & -0.878 & L2 \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Aggregate paired comparison across 12 dataset-seed pairs. Higher is better for accuracy and weighted F1, while lower is better for the train-validation gap. Best values are shown in \textbf{bold}. Only the gap reduction is statistically significant at $\alpha=0.05$.}
+    \label{tab:aggregate-results}
+\end{table*}

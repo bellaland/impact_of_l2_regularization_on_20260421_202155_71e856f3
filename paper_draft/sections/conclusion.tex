@@ -1,0 +1,8 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We studied whether validation-tuned L2 regularization improves held-out generalization for small tabular classification datasets relative to an otherwise matched logistic-regression baseline. Across four datasets and three random seeds per dataset, L2 produced a clear and statistically supported reduction in the train-validation gap, but only a small and non-significant increase in aggregate test accuracy and weighted F1.
+
+The key takeaway is simple: in this setting, L2 regularization is a reliable anti-overfitting mechanism, not a universal accuracy booster. That is a useful distinction for practitioners and for empirical papers that interpret regularization effects too broadly.
+
+Several extensions would strengthen the picture. Future work should repeat the protocol for small multilayer perceptrons, replace single validation splits with repeated nested cross-validation, add calibration and confusion-matrix analysis, and test whether the same pattern persists on a larger collection of small tabular datasets or stratified subsamples of larger benchmarks.

@@ -1,0 +1,6 @@
+{
+  "baseline_test_acc": 0.8292108341163574,
+  "l2_test_acc": 0.8384884455015268,
+  "baseline_train_val_gap": 0.12967718538627435,
+  "l2_train_val_gap": 0.025704230868268108
+}

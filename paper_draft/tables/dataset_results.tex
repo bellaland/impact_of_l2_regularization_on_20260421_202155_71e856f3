@@ -1,0 +1,17 @@
+\begin{table*}[t]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lccccccc@{}}
+        \toprule
+        Dataset & Dummy Acc. & Baseline Acc. & L2 Acc. & Baseline F1 & L2 F1 & Baseline Gap & L2 Gap \\
+        \midrule
+        \breastcancer & 0.558 & 0.946 & {\bf 0.977} & 0.946 & {\bf 0.977} & 0.027 & {\bf -0.011} \\
+        \wine & 0.321 & 0.963 & {\bf 1.000} & 0.963 & {\bf 1.000} & 0.049 & {\bf 0.019} \\
+        \sonar & 0.448 & {\bf 0.802} & 0.781 & {\bf 0.802} & 0.780 & 0.301 & {\bf 0.049} \\
+        \glass & 0.273 & {\bf 0.606} & 0.596 & {\bf 0.600} & 0.586 & 0.141 & {\bf 0.046} \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Per-dataset mean results across three seeds. Higher is better for accuracy and weighted F1, and lower is better for the train-validation gap. The pattern is mixed for predictive metrics but consistently favors L2 for gap reduction. Median selected $C$ values are $0.10$ for \breastcancer, $0.01$ for \wine, $0.10$ for \sonar, and $100.0$ for \glass.}
+    \label{tab:dataset-results}
+\end{table*}

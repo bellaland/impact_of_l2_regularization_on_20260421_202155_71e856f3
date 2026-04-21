@@ -1,0 +1,31 @@
+{
+  "python_version": "3.12.8",
+  "platform": "Linux-6.12.54-linuxkit-x86_64-with-glibc2.35",
+  "numpy_version": "2.4.4",
+  "pandas_version": "3.0.2",
+  "scikit_learn_version": "1.8.0",
+  "scipy_version": "1.17.1",
+  "gpu": "NO_GPU",
+  "seeds": [
+    7,
+    21,
+    42
+  ],
+  "c_grid": [
+    0.0001,
+    0.0003,
+    0.001,
+    0.003,
+    0.01,
+    0.03,
+    0.1,
+    0.3,
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0,
+    1000.0
+  ]
+}

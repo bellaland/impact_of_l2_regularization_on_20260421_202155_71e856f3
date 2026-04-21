@@ -1,0 +1,708 @@
+You are an academic paper writer. Generate a complete NEURIPS style paper
+based on the experiment results provided.
+
+════════════════════════════════════════════════════════════════════════════════
+                         IMPORTANT: BEFORE YOU START
+════════════════════════════════════════════════════════════════════════════════
+
+Before writing any content, you MUST complete these steps:
+
+1. READ THE SKILL: Review the paper-writer skill at .codex/skills/paper-writer/SKILL.md
+2. READ THE STYLE GUIDE: Study templates/paper_writing/lab_style_guide.md carefully
+3. REVIEW EXAMPLES: Browse paper_examples/ for formatting and language patterns:
+   - Look at sections/1.introduction.tex for language style
+   - Look at tables/*.tex for table formatting
+   - Look at commands/*.tex for macro usage
+4. VERIFY COMMAND TEMPLATES: Command templates (math.tex, general.tex, macros.tex) are pre-copied to paper_draft/commands/
+
+CRITICAL: Reference example papers for FORMATTING and LANGUAGE STYLE only.
+Do NOT copy content, phrasing, or narrative structure from the example papers.
+The examples are in a different research domain - focus only on presentation style.
+
+════════════════════════════════════════════════════════════════════════════════
+                            EXPERIMENT REPORT
+════════════════════════════════════════════════════════════════════════════════
+
+# Report: Impact of L2 Regularization on Small Dataset Generalization
+
+## 1. Executive Summary
+This study tested whether L2 regularization improves generalization for small tabular classification datasets with fewer than 1000 samples. Across four datasets and three random seeds per dataset, validation-tuned L2 logistic regression increased mean test accuracy from `0.8292` to `0.8385`, but that accuracy gain was not statistically significant in the paired aggregate analysis (`p = 0.345`). In contrast, L2 dramatically reduced the mean train-validation gap from `0.1297` to `0.0257`, and that reduction was statistically significant (`p = 0.011`, paired Cohen&#39;s `d = -0.878`).
+
+The practical implication is narrower than the initial hypothesis: on these small datasets, L2 was reliable as an anti-overfitting mechanism but not reliable as a universal accuracy booster. It reduced the generalization gap in `11/12` runs, while test accuracy improved in only `5/12` runs and worsened in `3/12`.
+
+## 2. Research Question &amp; Motivation
+### Research question
+Does L2 regularization improve held-out generalization on small classification datasets compared with an otherwise matched logistic-regression baseline?
+
+### Motivation
+The literature review in [literature_review.md](./literature_review.md) showed a gap between strong theoretical and large-scale evidence for weight decay and the practical small-data tabular setting. Most prior work focuses on vision or synthetic tasks, and relatively few reports quantify how much L2 changes both predictive performance and overfitting indicators under repeated random splits on tiny real datasets.
+
+### Literature summary
+- Krogh and Hertz (1991) provide the classical smaller-norm argument for weight decay.
+- Loshchilov and Hutter (2019) show that optimizer semantics matter when comparing L2 and weight decay.
+- Zhang et al. (2017) caution against claiming that explicit regularization alone explains generalization.
+- Power et al. (2022) and D&#39;Angelo et al. (2024) support the view that regularization affects optimization dynamics and data efficiency, especially in small-data or overtraining-prone regimes.
+
+## 3. Data Construction
+### Dataset description
+The experiment used four local CSV datasets gathered in `datasets/`:
+
+| Dataset | Samples | Features | Classes | Task |
+|---|---:|---:|---:|---|
+| `sklearn_wine` | 178 | 13 | 3 | multiclass classification |
+| `sklearn_breast_cancer` | 569 | 30 | 2 | binary classification |
+| `uci_glass_identification` | 214 | 9 | 6 | multiclass classification |
+| `uci_connectionist_bench_sonar` | 208 | 60 | 2 | binary classification |
+
+### Example samples
+Representative raw examples are stored in each dataset directory as `samples.json`, for example:
+- `datasets/sklearn_wine/samples.json`
+- `datasets/sklearn_breast_cancer/samples.json`
+- `datasets/uci_connectionist_bench_sonar/samples.json`
+
+### Data quality
+The EDA summary in `results/eda_summary.csv` found:
+- No missing values in the four primary datasets.
+- No duplicate rows in the four primary datasets.
+- Moderate class imbalance in `breast_cancer`, `sonar`, and `glass`, so weighted F1 was reported alongside accuracy.
+
+### Preprocessing
+- Target labels were encoded with `LabelEncoder`.
+- Features were standardized with `StandardScaler`.
+- The scaler was fit on the training split only and applied to validation/test splits to avoid leakage.
+
+### Train/Val/Test split
+Each run used a stratified `70/15/15` split with seeds `{7, 21, 42}`. Hyperparameter selection used only the validation split; the test split was held out until final evaluation.
+
+## 4. Methodology
+### Approach
+The study compared:
+- A near-unregularized logistic regression baseline, implemented as a very weak L2 penalty (`C = 1e12`) because the current `scikit-learn 1.8.0` API deprecates the older explicit penalty controls.
+- A validation-tuned L2 logistic regression model searched over a logarithmic grid of `C` values.
+- A `DummyClassifier(strategy=&#34;stratified&#34;)` sanity baseline.
+
+### Hyperparameters
+
+| Parameter | Value | Selection Method |
+|---|---|---|
+| Seeds | `7, 21, 42` | fixed preregistration |
+| Split ratio | `70/15/15` | fixed preregistration |
+| Solver | `lbfgs` | constant across conditions |
+| Max iterations | `5000` | fixed for convergence stability |
+| Baseline regularization | `C=1e12` | implementation workaround for near-unregularized fit |
+| L2 search grid | `1e-4` to `1e3` | fixed log grid |
+| Selection metric | validation weighted F1 | fixed preregistration |
+
+### Metrics
+- Test accuracy
+- Weighted F1
+- Train-validation accuracy gap
+- Train-test accuracy gap
+- Coefficient L2 norm
+
+### Statistical analysis
+Paired `ttest_rel` compared L2 and baseline metrics across the 12 dataset-seed pairs. I also report paired Cohen&#39;s `d`, 95% confidence intervals for the mean paired difference, and Shapiro-Wilk tests on the paired differences as a rough assumption check. Because each per-dataset analysis has only `n=3`, those tests should be treated as descriptive rather than definitive.
+
+### Environment and compute
+- CPU only; GPU detection returned `NO_GPU`.
+- Python `3.12.8`
+- NumPy `2.4.4`
+- pandas `3.0.2`
+- scikit-learn `1.8.0`
+- SciPy `1.17.1`
+- Matplotlib `3.10.8`
+- seaborn `0.13.2`
+- Final execution time: about `29s`
+
+## 5. Results
+### Requested metrics output
+The required JSON file `results/metrics.json` contains:
+
+```json
+{
+  &#34;baseline_test_acc&#34;: 0.8292108341163574,
+  &#34;l2_test_acc&#34;: 0.8384884455015268,
+  &#34;baseline_train_val_gap&#34;: 0.12967718538627435,
+  &#34;l2_train_val_gap&#34;: 0.025704230868268108
+}
+```
+
+### Aggregate comparison
+
+| Metric | Baseline Mean | L2 Mean | Mean Difference (L2 - Baseline) | p-value |
+|---|---:|---:|---:|---:|
+| Test accuracy | 0.8292 | 0.8385 | +0.0093 | 0.345 |
+| Weighted F1 | 0.8276 | 0.8357 | +0.0081 | 0.431 |
+| Train-validation gap | 0.1297 | 0.0257 | -0.1040 | 0.011 |
+
+Additional aggregate statistics from `results/statistical_tests.json`:
+- Accuracy: 95% CI `[-0.0114, 0.0300]`, paired Cohen&#39;s `d = 0.285`
+- Weighted F1: 95% CI `[-0.0138, 0.0301]`, paired Cohen&#39;s `d = 0.236`
+- Train-validation gap: 95% CI `[-0.1792, -0.0287]`, paired Cohen&#39;s `d = -0.878`
+
+### Per-dataset summary
+
+| Dataset | Dummy Acc | Baseline Acc | L2 Acc | Baseline Gap | L2 Gap | Median Best C |
+|---|---:|---:|---:|---:|---:|---:|
+| `sklearn_breast_cancer` | 0.500 | 0.946 | 0.977 | 0.027 | -0.011 | 0.10 |
+| `sklearn_wine` | 0.296 | 0.963 | 1.000 | 0.049 | 0.019 | 0.01 |
+| `uci_connectionist_bench_sonar` | 0.396 | 0.802 | 0.781 | 0.301 | 0.049 | 0.10 |
+| `uci_glass_identification` | 0.202 | 0.606 | 0.596 | 0.141 | 0.046 | 100.00 |
+
+Observed run-level pattern:
+- L2 improved test accuracy in `5/12` runs.
+- L2 matched the baseline in `4/12` runs.
+- L2 reduced the train-validation gap in `11/12` runs.
+
+### Figures
+- `figures/regularization_summary.png`: three-panel figure showing wine train/validation curves, wine coefficient shrinkage path, and validation weighted F1 versus `C` across datasets.
+- `figures/train_val_gap_boxplot.png`: baseline vs L2 train-validation gap distribution by dataset.
+
+## 6. Analysis &amp; Discussion
+### What the results show
+The strongest supported claim is that L2 regularization reduces overfitting on small datasets in this setup. The mean train-validation gap shrank by about `0.104`, and the paired test was significant at the preregistered `alpha = 0.05`. This is consistent with the classical role of L2 as a shrinkage-based variance control.
+
+The accuracy story is weaker. Mean test accuracy increased by only `0.0093`, with a 95% confidence interval crossing zero and a non-significant paired test. That means the experiment does not support the stronger claim that L2 reliably improves held-out predictive performance across small datasets in aggregate.
+
+### Dataset-specific behavior
+- `sklearn_breast_cancer` showed the clearest practical win for L2, with both accuracy and weighted F1 improving substantially. The paired p-values are below `0.05`, but this rests on only three seeds and should be interpreted cautiously.
+- `sklearn_wine` also favored L2, reaching perfect mean test accuracy under the selected regularization settings.
+- `sonar` and `glass` showed the opposite pattern: substantial shrinkage and smaller gaps, but no clear predictive gain. This suggests the penalty can reduce variance while adding enough bias to offset the benefit on harder or noisier small datasets.
+
+### Error analysis and model complexity
+The coefficient norms confirm the expected shrinkage effect, especially on the highest-variance datasets. `breast_cancer` and `wine` benefited from both shrinkage and accuracy gains, while `sonar` and `glass` mostly exhibited shrinkage without improved prediction. That is consistent with the literature&#39;s qualified view that regularization helps conditionally, not universally.
+
+### Comparison to the literature
+These findings align better with the cautious interpretation from the literature review than with a blanket pro-regularization claim. The results support the idea that L2 is reliable for controlling overfitting, but they do not show that this automatically translates into statistically significant accuracy gains across all small real tabular datasets.
+
+## 7. Limitations
+- Only logistic regression was studied; results may differ for MLPs or tree-based models.
+- The aggregate analysis uses only 12 paired observations and per-dataset analyses use only 3 seeds.
+- The near-unregularized baseline is approximated with `C=1e12` for compatibility with `scikit-learn 1.8.0`, not a mathematically exact zero-penalty solver.
+- A single train/validation/test split per seed was used instead of nested cross-validation, so hyperparameter variance may still be understated.
+- Shapiro-Wilk rejected normality for the aggregate train-gap differences, so the paired t-test on that metric should be read with some caution even though the effect size is large.
+
+## 8. Conclusions &amp; Next Steps
+The hypothesis is only partially supported. L2 regularization clearly reduced overfitting in this small-data benchmark, but the aggregate improvement in held-out accuracy was small and not statistically significant. A more defensible conclusion is that L2 is a dependable shrinkage tool for small tabular datasets, while its predictive gains are dataset-dependent.
+
+Recommended follow-up work:
+- Extend the same protocol to small MLPs, where overfitting pressure is stronger.
+- Replace single validation splits with repeated nested cross-validation.
+- Add calibration metrics and confusion-matrix-based error analysis.
+- Test whether the same pattern holds on more small tabular datasets or stratified subsamples of larger datasets.
+
+## References
+- Krogh, A., &amp; Hertz, J. A. (1991). *A Simple Weight Decay Can Improve Generalization*.
+- Loshchilov, I., &amp; Hutter, F. (2019). *Decoupled Weight Decay Regularization*.
+- Zhang, C., Bengio, S., Hardt, M., Recht, B., &amp; Vinyals, O. (2017). *Understanding Deep Learning Requires Rethinking Generalization*.
+- Power, A., Burda, Y., Edwards, H., Babuschkin, I., &amp; Misra, V. (2022). *Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets*.
+- D&#39;Angelo, F., Andriushchenko, M., Varre, A., &amp; Flammarion, N. (2024). *Why Do We Need Weight Decay in Modern Deep Learning?*
+- Golatkar, A., Achille, A., &amp; Soatto, S. (2019). *Time Matters in Regularizing Deep Networks*.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                            RESEARCH PLAN
+════════════════════════════════════════════════════════════════════════════════
+
+# Research Plan: Impact of L2 Regularization on Small Dataset Generalization
+
+## Motivation &amp; Novelty Assessment
+
+### Why This Research Matters
+L2 regularization is one of the most common defenses against overfitting, but practitioners working with small tabular datasets rarely get a quantitative estimate of how much it changes the train-validation gap or held-out accuracy in a controlled setting. A careful small-data benchmark is useful because model selection noise is high below 1000 samples, and seemingly standard choices can produce unstable conclusions.
+
+### Gap in Existing Work
+The literature review shows that most weight-decay evidence comes from vision models or synthetic tasks, while direct repeated-seed evidence on tiny real tabular datasets is relatively thin. Existing work also warns that regularization gains are conditional rather than universal, so a practical controlled study on small real datasets fills a concrete measurement gap.
+
+### Our Novel Contribution
+This project contributes a reproducible, repeated-seed comparison of unregularized versus L2-regularized logistic regression on four small tabular classification datasets, with fixed preprocessing, validation-based alpha selection, held-out test evaluation, and explicit reporting of overfitting gaps, coefficient norms, and statistical significance. The contribution is empirical and practical: quantify the size and consistency of the L2 effect in a regime where split variance is large.
+
+### Experiment Justification
+- Experiment 1: Run repeated stratified hold-out evaluation on `sklearn_wine` because it is the prompt-aligned primary dataset and a direct small multiclass benchmark.
+- Experiment 2: Repeat the same protocol on `sklearn_breast_cancer`, `uci_glass_identification`, and `uci_connectionist_bench_sonar` to test whether any observed benefit generalizes beyond one dataset.
+- Experiment 3: Sweep L2 strengths on the validation split and aggregate performance-versus-regularization curves to measure whether improvements come with lower train-validation gaps and smaller coefficient norms.
+- Experiment 4: Perform paired statistical testing across random seeds to determine whether any apparent accuracy or F1 gains are larger than split noise.
+
+## Research Question
+Does L2 regularization improve held-out generalization on small classification datasets with fewer than 1000 samples, compared with an otherwise identical unregularized logistic regression baseline?
+
+## Background and Motivation
+Regularization is intended to reduce variance by discouraging large weights, but on small datasets it can also increase bias enough to erase any benefit. The gathered literature supports a qualified version of the hypothesis: L2 can help when sample size is small relative to feature count or class complexity, but the effect depends on dataset structure and on evaluation variance. This motivates a repeated-seed benchmark that reports both predictive performance and direct overfitting indicators.
+
+## Hypothesis Decomposition
+- Sub-hypothesis 1: L2-regularized logistic regression will have a smaller train-validation gap than the unregularized baseline on average.
+- Sub-hypothesis 2: Validation-tuned L2 regularization will improve held-out test accuracy and weighted F1 on at least the primary dataset and, ideally, on average across datasets.
+- Sub-hypothesis 3: L2 regularization will reduce model complexity as measured by the L2 norm of the fitted coefficients.
+- Independent variables: dataset identity, random seed, and regularization strength `C` / equivalent alpha.
+- Dependent variables: train accuracy, validation accuracy, test accuracy, weighted F1, train-validation gap, train-test gap, and coefficient norm.
+- Alternative explanation: any observed gain may be caused mostly by split variance rather than by regularization; repeated-seed paired testing is required to separate these.
+
+## Proposed Methodology
+
+### Approach
+Use a controlled comparison study with identical preprocessing and model families. For each dataset and seed, create a stratified 70/15/15 split, fit a preprocessing-plus-logistic-regression pipeline, treat a nearly unregularized model as the baseline, select the best L2 strength from a logarithmic grid using validation weighted F1, then compare the final baseline and tuned L2 models on the untouched test split.
+
+### Experimental Steps
+1. Verify the isolated environment, install required dependencies with `uv`, and record hardware and package versions.
+2. Load the four primary small-data datasets from `datasets/`, identify the label column, and run data quality checks for missing values, duplicates, class counts, and feature summary statistics.
+3. Save representative samples and EDA plots so dataset properties are documented and reproducible.
+4. For each dataset and each seed in `{7, 21, 42}`, create a stratified 70/15/15 split and fit a `StandardScaler` on the training subset only to prevent leakage.
+5. Train the baseline logistic regression with effectively no penalty using a very large `C`, plus a stratified random dummy baseline for sanity checking.
+6. Train L2 logistic regression models across a logarithmic grid of `C` values, choose the best value using validation weighted F1, and refit the selected model on the training subset for evaluation.
+7. Record train, validation, and test metrics, the train-validation gap, the train-test gap, selected `C`, and coefficient norms for both baseline and tuned L2 models.
+8. Aggregate results across seeds and datasets, compute paired t-tests and effect sizes, then generate figures for performance-versus-regularization, coefficient paths, and train/validation comparisons.
+9. Export the requested metrics JSON, full per-run CSV/JSON artifacts, and a final report with interpretation, limitations, and reproducibility instructions.
+
+### Baselines
+- `DummyClassifier(strategy=&#34;stratified&#34;)`: lower-bound sanity check.
+- Logistic regression with effectively no regularization (`C=1e6`): primary baseline matched to the regularized model except for the penalty strength.
+
+### Evaluation Metrics
+- Test accuracy: intuitive primary predictive metric.
+- Weighted F1: robust to moderate class imbalance and multiclass settings.
+- Train-validation gap: direct overfitting indicator required by the task.
+- Train-test gap: additional overfitting indicator for final evaluation.
+- Coefficient L2 norm: proxy for model complexity and expected shrinkage effect.
+
+### Statistical Analysis Plan
+- Main null hypothesis: mean paired difference between tuned L2 and baseline test accuracy is zero.
+- Secondary null hypothesis: mean paired difference in train-validation gap is zero.
+- Use paired `ttest_rel` across the three required random seeds for each dataset and for the macro aggregate across dataset-seed pairs.
+- Check approximate normality of paired differences with Shapiro-Wilk where sample size permits, but treat low power as a limitation.
+- Report p-values, 95% confidence intervals for paired mean differences, and Cohen&#39;s d for paired samples.
+- Significance threshold: `alpha = 0.05`.
+
+## Expected Outcomes
+Results support the hypothesis if the tuned L2 model reduces the train-validation gap and shows equal or better mean test performance than the unregularized baseline, with statistically significant paired improvement in at least one core outcome. Results weaken the hypothesis if L2 mostly shrinks coefficients without improving held-out performance or if gains are inconsistent relative to seed variance.
+
+## Timeline and Milestones
+1. Planning and preregistration in `planning.md`: 10 minutes.
+2. Environment verification and dependency installation: 5 minutes.
+3. Data validation and EDA: 10 minutes.
+4. Pipeline implementation and local checks: 20 minutes.
+5. Full experiment runs and artifact generation: 15 minutes.
+6. Statistical analysis, reporting, and validation rerun: 15 minutes.
+
+## Potential Challenges
+- Tiny validation splits can make hyperparameter selection noisy; mitigate with a modest log-grid and repeated seeds.
+- Some datasets may be too easy or too unstable, which can hide the effect size; interpret per-dataset results rather than only an overall average.
+- Multiclass and binary datasets differ in difficulty; use weighted F1 and dataset-specific reporting to avoid misleading aggregation.
+- Logistic regression in scikit-learn always includes a penalty parameterization, so the “unregularized” baseline will be approximated with a very large `C`; document this explicitly.
+
+## Success Criteria
+- The code runs from the project-local environment without errors.
+- `results/metrics.json` contains `baseline_test_acc`, `l2_test_acc`, `baseline_train_val_gap`, and `l2_train_val_gap`.
+- Required figures are produced as PNG files.
+- The report includes paired significance testing, effect sizes, limitations, and reproducibility details.
+- Results are reproducible across the three specified random seeds.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          LITERATURE REVIEW
+════════════════════════════════════════════════════════════════════════════════
+
+# Literature Review: Impact of L2 Regularization on Small Dataset Generalization
+
+## Review Scope
+
+### Research Question
+Does L2 regularization materially improve held-out generalization on small datasets, and under what conditions is the effect real versus overstated?
+
+### Inclusion Criteria
+- Papers directly about L2 regularization, weight decay, or closely related generalization effects
+- Papers useful for experiment design in small-data or overfitting-prone settings
+- Foundational papers plus modern reinterpretations
+
+### Exclusion Criteria
+- Papers focused only on unrelated regularizers
+- Large-scale pretraining papers with no transferable insight for small supervised datasets
+- Implementation notes without empirical or theoretical relevance
+
+### Time Frame
+- Foundational work plus modern papers through 2024
+
+### Sources
+- Paper-finder helper script
+- arXiv
+- NeurIPS / OpenReview / proceedings pages
+- GitHub repos linked from papers
+
+## Search Log
+
+| Date | Query | Source | Results | Notes |
+|------|-------|--------|---------|-------|
+| 2026-04-21 | `L2 regularization weight decay small dataset generalization overfitting tabular machine learning` | local paper-finder script | fallback | local service unavailable |
+| 2026-04-21 | targeted searches for weight decay, small datasets, and generalization | arXiv / NeurIPS / OpenReview | 6 included papers | focused on papers with accessible PDFs |
+
+## Screening Results
+
+| Paper | Title Screen | Abstract Screen | Full-Text | Notes |
+|------|------|------|------|------|
+| Krogh and Hertz 1991 | Include | Include | Include | Classic theoretical foundation |
+| Loshchilov and Hutter 2019 | Include | Include | Partial | Critical optimizer implementation detail |
+| Zhang et al. 2017 | Include | Include | Partial | Important counterpoint |
+| Power et al. 2022 | Include | Include | Include | Strong small-data relevance |
+| D&#39;Angelo et al. 2024 | Include | Include | Include | Modern mechanism-oriented interpretation |
+| Golatkar et al. 2019 | Include | Include | Partial | Useful for training-schedule design |
+
+## Research Area Overview
+
+The literature supports a narrower claim than the original hypothesis. L2 regularization often improves generalization when sample size is small relative to model capacity, but the benefit depends heavily on optimizer choice, learning-rate regime, and training duration. Modern work also argues that weight decay may help less by classical capacity control and more by changing optimization dynamics. For this project, that means an unregularized-vs-L2 comparison is worthwhile, but only if the optimizer and schedule are controlled carefully.
+
+## Key Papers
+
+### A Simple Weight Decay Can Improve Generalization
+- **Authors**: Anders Krogh, John A. Hertz
+- **Year**: 1991
+- **Source**: NeurIPS
+- **Key Contribution**: Classical explanation for why weight decay can improve generalization.
+- **Methodology**: Analytical treatment of linear networks, extension argument for nonlinear networks, and simulations on NetTalk.
+- **Datasets Used**: NetTalk.
+- **Results**: Weight decay helps by selecting smaller-norm solutions and by suppressing target-noise effects when the penalty is tuned appropriately.
+- **Code Available**: No official code link identified.
+- **Relevance to Our Research**: Best foundational justification for expecting gains on overparameterized small-data problems.
+
+### Decoupled Weight Decay Regularization
+- **Authors**: Ilya Loshchilov, Frank Hutter
+- **Year**: 2019
+- **Source**: ICLR
+- **Key Contribution**: Shows that L2 regularization and true weight decay are equivalent for vanilla SGD but not for adaptive optimizers like Adam.
+- **Methodology**: Theoretical optimizer analysis plus image-classification experiments.
+- **Datasets Used**: CIFAR-10, CIFAR-100, ImageNet32x32.
+- **Results**: Decoupled weight decay improves Adam generalization and separates the learning-rate choice from weight-decay choice more cleanly.
+- **Code Available**: Yes, `code/adamw-and-sgdw/`.
+- **Relevance to Our Research**: If the experiment runner uses Adam or AdamW, comparing “L2” versus “weight decay” implementation details matters.
+
+### Understanding Deep Learning Requires Rethinking Generalization
+- **Authors**: Chiyuan Zhang, Samy Bengio, Moritz Hardt, Benjamin Recht, Oriol Vinyals
+- **Year**: 2017
+- **Source**: ICLR
+- **Key Contribution**: Demonstrates that explicit regularization does not fully explain why deep nets generalize.
+- **Methodology**: Random-label and random-input memorization tests with standard deep networks.
+- **Datasets Used**: Image benchmarks including CIFAR and ImageNet variants.
+- **Results**: Deep networks fit random labels even with regularization, so regularization is not a complete theory of generalization.
+- **Code Available**: No official code link identified.
+- **Relevance to Our Research**: Prevents overclaiming. A positive L2 result on small tabular datasets should be framed as conditional and empirical, not universal.
+
+### Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets
+- **Authors**: Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra
+- **Year**: 2022
+- **Source**: arXiv
+- **Key Contribution**: Small-data setting where generalization appears long after memorization.
+- **Methodology**: Transformer-style models on algorithmic binary-operation tables under varying dataset fractions and regularization settings.
+- **Datasets Used**: Synthetic modular arithmetic, permutation composition, and related algorithmic tasks.
+- **Results**: Smaller datasets require much longer optimization to generalize, and weight decay substantially improves data efficiency.
+- **Code Available**: No repository link was required for this workspace.
+- **Relevance to Our Research**: Most directly supports the small-data angle, though on synthetic tasks rather than tabular UCI data.
+
+### Why Do We Need Weight Decay in Modern Deep Learning?
+- **Authors**: Francesco D&#39;Angelo, Maksym Andriushchenko, Aditya Varre, Nicolas Flammarion
+- **Year**: 2024
+- **Source**: NeurIPS
+- **Key Contribution**: Reinterprets weight decay as a mechanism that changes optimization dynamics rather than simply reducing model capacity.
+- **Methodology**: Theory plus large empirical study on vision models and GPT-style language models.
+- **Datasets Used**: CIFAR-10-5m and LLM training corpora.
+- **Results**: Weight decay improves outcomes in both over-training and near-one-pass regimes, but not because it prevents interpolation in the classical sense.
+- **Code Available**: Yes, `code/why-weight-decay/`.
+- **Relevance to Our Research**: Suggests that on small datasets, benefits may interact strongly with optimization schedule and effective learning rate.
+
+### Time Matters in Regularizing Deep Networks
+- **Authors**: Aditya Golatkar, Alessandro Achille, Stefano Soatto
+- **Year**: 2019
+- **Source**: NeurIPS
+- **Key Contribution**: Shows that early-stage regularization matters more than late-stage regularization.
+- **Methodology**: Turn regularizers on or off at different training phases across CNN architectures and image datasets.
+- **Datasets Used**: CIFAR-10, CIFAR-100, SVHN, ImageNet.
+- **Results**: Applying weight decay only after the initial transient provides little benefit; early regularization is the important part.
+- **Code Available**: No official code cloned for this workspace.
+- **Relevance to Our Research**: Supports using regularization from the beginning of each run and keeping schedule design fixed.
+
+## Common Methodologies
+
+- Weight decay as explicit parameter penalty: classic view from Krogh and Hertz.
+- Decoupled weight decay in adaptive optimizers: important when using Adam-family baselines.
+- Randomization and stress tests: used to show regularization is not a full explanation of generalization.
+- Small-data synthetic probes: useful for studying overfitting/generalization transitions in a controlled way.
+
+## Standard Baselines
+
+- No regularization: necessary primary baseline.
+- L2 regularization / weight decay: main intervention.
+- Simple linear models with ridge penalty: strong low-variance baseline for tabular data.
+- Small MLP without L2 versus with tuned L2: most direct hypothesis test.
+
+## Evaluation Metrics
+
+- Accuracy: primary metric for the recommended classification datasets.
+- F1 score: helpful if class imbalance appears in Sonar or Glass.
+- Train-test gap: direct overfitting indicator and should be reported alongside accuracy.
+- Mean and standard deviation across repeated seeds or repeated splits: necessary because these datasets are small.
+
+## Datasets in the Literature
+
+- Small synthetic datasets: strong for mechanism studies, weak for direct tabular transfer.
+- CIFAR-scale vision benchmarks: common in optimizer papers, useful for understanding optimizer interactions but less aligned with this project.
+- For this workspace, small tabular datasets are the better experimental fit than the datasets used in most weight-decay papers.
+
+## Gaps and Opportunities
+
+- Direct evidence on very small real tabular datasets is thinner than evidence on vision or synthetic data.
+- The literature often conflates “L2 penalty” and “weight decay,” which can invalidate optimizer comparisons.
+- Many papers emphasize final test error but do not report repeated small-sample variance, which is critical here.
+
+## Recommendations for Our Experiment
+
+- **Recommended datasets**: `sklearn_wine`, `sklearn_breast_cancer`, `uci_glass_identification`, `uci_connectionist_bench_sonar`.
+- **Recommended baselines**: unregularized logistic regression or ridge-style linear baseline, unregularized MLP, MLP with tuned L2, optionally AdamW versus Adam for optimizer sensitivity.
+- **Recommended metrics**: accuracy, macro-F1 where needed, and train-test gap over repeated stratified splits.
+- **Methodological considerations**:
+  - keep network width modest enough that L2 can plausibly matter but still allow overfitting;
+  - regularize from the start of training;
+  - tune L2 strength over a logarithmic grid;
+  - if using Adam, distinguish true AdamW from simply adding an L2 term to the loss;
+  - report variance across seeds because these datasets are small enough for split noise to dominate.
+
+## Bottom Line
+
+The literature supports the hypothesis in a qualified form: L2 regularization can reduce overfitting and improve held-out performance in small-data settings, but the effect is contingent on the optimizer, training dynamics, and dataset structure. For a small-tabular experiment suite, the cleanest contribution is not to prove that L2 always helps, but to measure when it helps and how large the gain is relative to split variance.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          PAPER REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+Generate a complete academic paper with the following structure:
+
+1. TITLE
+   - Clear, specific, informative
+   - Should convey main finding or contribution
+
+2. AUTHOR
+   - Use this exact author line in the \author{} block: example_user and NeuriCo
+
+3. ABSTRACT (150-250 words)
+   - Problem statement
+   - Approach
+   - Key results
+   - Significance
+
+4. INTRODUCTION
+   - Research problem and motivation
+   - Gap in existing work
+   - Our contribution (be specific)
+   - Paper organization
+
+5. RELATED WORK
+   - Organized by theme/approach
+   - Position our work relative to prior work
+   - Cite papers from literature review
+
+6. METHODOLOGY
+   - Clear description of approach
+   - Experimental setup
+   - Datasets used
+   - Evaluation metrics
+   - Baselines
+
+7. RESULTS
+   - Present results with tables and figures
+   - Statistical analysis
+   - Comparison to baselines
+   - Ablation studies (if applicable)
+
+8. DISCUSSION
+   - Interpretation of results
+   - Limitations
+   - Broader implications
+
+9. CONCLUSION
+   - Summary of contributions
+   - Key findings
+   - Future work
+
+10. REFERENCES
+   - BibTeX format
+   - All cited papers
+
+════════════════════════════════════════════════════════════════════════════════
+                          OUTPUT FORMAT
+════════════════════════════════════════════════════════════════════════════════
+
+Create a MODULAR LaTeX project with the following directory structure:
+
+paper_draft/
+├── main.tex              # Main file that imports all sections
+├── references.bib        # BibTeX references
+├── sections/
+│   ├── abstract.tex      # Abstract content
+│   ├── introduction.tex  # Introduction section
+│   ├── related_work.tex  # Related work section
+│   ├── methodology.tex   # Methodology section
+│   ├── results.tex       # Results section
+│   ├── discussion.tex    # Discussion section
+│   └── conclusion.tex    # Conclusion section
+├── figures/              # Directory for any generated figures
+├── tables/               # Directory for complex standalone tables
+└── appendix/             # Directory for appendix sections (if needed)
+
+INSTRUCTIONS:
+1. First, create the directory structure above (mkdir -p paper_draft/sections paper_draft/figures paper_draft/tables paper_draft/appendix)
+2. Write main.tex using the EXACT preamble for NEURIPS:
+
+   \documentclass{article}
+   \usepackage[final]{neurips_2025}  % NEURIPS style (neurips_2025.sty is in paper_draft/)
+   \usepackage[hidelinks]{hyperref}  % REQUIRED: clickable links
+   \usepackage{booktabs}  % REQUIRED: professional tables
+   \usepackage{graphicx}
+   \usepackage{amsmath,amssymb}
+
+   % Import command files
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+   % Use this bibliography style:
+   \bibliographystyle{plainnat}
+
+   \author{example_user and NeuriCo}
+
+   - Use \input{sections/...} to include each section
+   - Use \bibliography{references} for references
+3. Write each section file with COMPLETE content (no placeholders)
+4. Each section file should include its \section{} command
+5. Write references.bib with all citations in BibTeX format
+6. After writing all files, compile the paper:
+   cd paper_draft && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+
+This modular structure allows humans to easily:
+- Edit individual sections without navigating a large file
+- Track changes per section
+- Reuse sections across different paper versions
+
+════════════════════════════════════════════════════════════════════════════════
+                          QUALITY REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+- Academic tone throughout
+- All claims must be supported by data from the experiment report
+- Proper citations using \cite{} commands
+- Clear figures and tables with proper captions
+- NO placeholder text - every section must have real content
+- The paper MUST compile without errors
+- If compilation fails, debug and fix the LaTeX errors
+
+════════════════════════════════════════════════════════════════════════════════
+                          LAB WRITING STYLE
+════════════════════════════════════════════════════════════════════════════════
+
+Follow these lab-specific conventions to match our paper style:
+
+1. LANGUAGE STYLE:
+   - Use active voice: "We propose", "We examine", "We focus on"
+   - Be direct and confident: "Our main question is...", "We hypothesize that..."
+   - State things clearly and simply - prefer plain language over jargon
+   - Use bold questions as paragraph organizers: {\bf what is X?}
+   - Include specific quantitative claims: "8.97% over baseline"
+   - Avoid fancy wording: "utilize" → "use", "facilitate" → "help"
+
+2. INTRODUCTION STRUCTURE:
+   - Engaging hook (get to the point quickly)
+   - Problem importance
+   - Gap identification
+   - Your approach with method figure reference
+   - Quantitative preview of results
+   - Contribution bullets (3-4 items, action verbs)
+
+3. CONTRIBUTION LISTS:
+   \begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+       \item We propose...
+       \item We conduct...
+       \item We complement...
+   \end{itemize}
+
+4. MODULAR COMMANDS STRUCTURE:
+   Command templates are pre-copied to paper_draft/commands/:
+   - math.tex: Math notation macros
+   - general.tex: Formatting macros
+   - macros.tex: Project-specific term definitions (customize this for your paper)
+
+   In main.tex, include:
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+5. REFERENCE CONVENTIONS:
+   Use reference macros from math.tex:
+   - \figref{fig:name} for "figure 1" (lowercase, in-sentence)
+   - \Figref{fig:name} for "Figure 1" (capitalized, start of sentence)
+   - \secref{sec:name} for "section 2"
+
+6. TEXT FORMATTING:
+   - Use \para{Header text} for bold paragraph headers
+   - Define method/dataset names with \textsc and \xspace:
+     \newcommand{\methodname}{\textsc{MethodName}\xspace}
+
+7. TABLE FORMATTING:
+   - Use booktabs package (no vertical lines)
+   - Use \resizebox{\textwidth}{!}{...} for wide tables
+   - Use @{} to remove padding at table edges
+   - Use \cmidrule(lr){x-y} for sub-headers
+   - Use \textsc{} for dataset/method names in headers
+   - Bold best results with {\bf ...}
+
+8. FIGURE FORMATTING:
+   - Use 0.32\textwidth for 3-column subfigures
+   - Use 0.95\linewidth for full-width figures
+   - Use \input{figures/legend} for shared legends
+   - Write self-contained captions explaining key observations
+
+9. RESULTS PRESENTATION:
+   - Define \increase and \decrease for colored arrows (green up, red down)
+   - Bold best results in tables
+   - Report confidence intervals when available
+
+10. ALGORITHM STYLING:
+    - Use algpseudocode with [noend]
+    - Use \triangleright for comments
+
+11. HYPERLINKS (REQUIRED):
+    - Always use \usepackage[hidelinks]{hyperref} or with colored links
+    - All citations, section refs, figure refs, table refs must be clickable
+    - This is essential for reader navigation
+
+════════════════════════════════════════════════════════════════════════════════
+                          WORKFLOW: REVIEW AND REFLECT
+════════════════════════════════════════════════════════════════════════════════
+
+Before calling finish, you MUST complete these review steps:
+
+1. REVIEW RESOURCES (at the start):
+   - Read .codex/skills/paper-writer/SKILL.md for detailed guidance
+   - Study templates/paper_writing/lab_style_guide.md for style conventions
+   - Browse paper_examples/ for formatting and language patterns
+
+2. SELF-REFLECTION (before finishing):
+   After writing all sections, review your work against these criteria:
+
+   LANGUAGE CHECK:
+   - [ ] Is the writing clear and jargon-free?
+   - [ ] Are claims specific with quantitative support?
+   - [ ] Is active voice used throughout?
+
+   FORMATTING CHECK:
+   - [ ] Does main.tex include \input{commands/math}, \input{commands/general}, \input{commands/macros}?
+   - [ ] Is hyperref package included for clickable references?
+   - [ ] Do tables use booktabs (no vertical lines)?
+   - [ ] Are best results bolded in tables?
+   - [ ] Are figures/tables properly captioned?
+
+   STRUCTURE CHECK:
+   - [ ] Does introduction follow: hook → importance → gap → approach → preview → contributions?
+   - [ ] Are contribution bullets specific with action verbs?
+   - [ ] Does the paper compile without errors?
+
+3. FIX ISSUES:
+   - Address any issues found in the self-reflection
+   - Re-compile and verify the PDF looks correct
+
+Only after completing this review should you consider the paper finished.

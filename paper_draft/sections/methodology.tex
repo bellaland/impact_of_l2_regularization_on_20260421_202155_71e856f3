@@ -1,0 +1,22 @@
+\section{Methodology}
+\label{sec:methodology}
+
+\para{Study design.} Our main question is whether L2 regularization improves held-out generalization on small classification datasets compared with an otherwise matched logistic-regression baseline. For each dataset and seed, we create one stratified $70/15/15$ train/validation/test split, fit preprocessing on the training partition only, tune regularization strength on the validation partition, and evaluate once on the untouched test split.
+
+\para{Datasets.} We study four local CSV datasets drawn from \texttt{datasets/}: \wine ($178$ samples, $13$ features, $3$ classes), \breastcancer ($569$ samples, $30$ features, $2$ classes), \glass ($214$ samples, $9$ features, $6$ classes), and \sonar ($208$ samples, $60$ features, $2$ classes). The exploratory data analysis artifact reports no missing values and no duplicate rows in these four primary datasets. Because \breastcancer, \glass, and \sonar show moderate class imbalance, we report weighted F1 alongside accuracy.
+
+\para{Preprocessing and models.} We encode labels with \texttt{LabelEncoder} and standardize features with \texttt{StandardScaler}. The scaler is fit on the training split only and then applied to validation and test splits to avoid leakage. We compare three models:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=2pt]
+    \item \dummy: \texttt{DummyClassifier(strategy="stratified")} as a sanity lower bound.
+    \item \baseline: logistic regression with a near-unregularized setting, implemented as \texttt{C=1e12}. This is an implementation workaround for the \texttt{scikit-learn 1.8.0} API rather than an exact zero-penalty solver.
+    \item \ltwo: logistic regression with L2 regularization and validation-based hyperparameter selection over a logarithmic grid of $C \in \{10^{-4}, 3\cdot10^{-4}, \ldots, 10^3\}$.
+\end{itemize}
+All logistic-regression runs use the \texttt{lbfgs} solver and \texttt{max\_iter=5000}.
+
+\para{Selection metric and evaluation metrics.} We choose the best L2 strength by validation weighted F1, then report test accuracy, weighted F1, train-validation accuracy gap, train-test accuracy gap, and coefficient $\normltwo$ norm. We focus especially on the train-validation gap because it gives a direct measure of overfitting under the same split protocol.
+
+\para{Statistical analysis.} We compare \ltwo against \baseline using paired \texttt{ttest\_rel} across the 12 dataset-seed pairs. For each aggregate metric, we report the mean paired difference, a $95\%$ confidence interval, paired Cohen's $d$, and a Shapiro--Wilk test on the paired differences as a descriptive assumption check. We treat per-dataset tests as descriptive because each one uses only three seeds.
+
+\para{Implementation details.} The experiment runs on CPU only and records \texttt{Python 3.12.8}, \texttt{NumPy 2.4.4}, \texttt{pandas 3.0.2}, \texttt{scikit-learn 1.8.0}, \texttt{SciPy 1.17.1}, \texttt{Matplotlib 3.10.8}, and \texttt{seaborn 0.13.2}. The full run takes about $29$ seconds. \Tabref{tab:datasets} summarizes the datasets, and the main quantitative comparisons appear in \tabref{tab:aggregate-results} and \tabref{tab:dataset-results}.
+
+\input{tables/datasets}
