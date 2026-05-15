@@ -452,3 +452,11 @@ Thumbs.db
 # -----------------------------------------------------------------------------
 # Logs
 # -----------------------------------------------------------------------------
+# NeuriCo runtime
+*.pyc
+# Large/local data
+datasets/**
+!datasets/
+!datasets/README.md
+# Logs may contain large transcripts
+logs/*.tmp
