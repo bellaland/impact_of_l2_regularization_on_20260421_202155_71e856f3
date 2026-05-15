@@ -3,8 +3,8 @@
   "stages": {
     "resource_finder": {
       "status": "completed",
-      "started_at": "2026-04-21T20:31:12.516580",
-      "completed_at": "2026-04-21T20:40:32.110748",
+      "started_at": "2026-05-15T17:19:27.232819",
+      "completed_at": "2026-05-15T17:19:32.292346",
       "success": true,
       "outputs": {
         "literature_review": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/literature_review.md",
@@ -15,16 +15,16 @@
       }
     },
     "experiment_runner": {
-      "status": "completed",
-      "started_at": "2026-04-21T20:40:32.113884",
-      "completed_at": "2026-04-21T20:51:42.236510",
-      "success": true,
+      "status": "failed",
+      "started_at": "2026-05-15T17:19:32.293599",
+      "completed_at": "2026-05-15T17:19:35.959057",
+      "success": false,
       "outputs": {
-        "success": true,
-        "return_code": 0,
-        "elapsed_time": 670.0393536090851,
-        "log_file": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/logs/execution_codex.log",
-        "transcript_file": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/logs/execution_codex_transcript.jsonl"
+        "success": false,
+        "return_code": 1,
+        "elapsed_time": 3.6201164722442627,
+        "log_file": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/logs/execution_claude.log",
+        "transcript_file": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3/logs/execution_claude_transcript.jsonl"
       }
     }
   },
