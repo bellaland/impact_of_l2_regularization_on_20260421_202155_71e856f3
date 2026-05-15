@@ -1,22 +1,25 @@
 [
   {
     "current_stage": "resource_finder",
-    "current_phase": "starting",
-    "status": "recoverable",
+    "current_phase": "running",
+    "status": "active",
     "what_is_done": [
       "Workspace prepared",
       "Dispatching to multi-agent pipeline",
-      "Pipeline resumed with existing state"
+      "Pipeline resumed with existing state",
+      "Workspace reused for research run",
+      "Starting resource finder stage"
     ],
     "key_findings": [
-      "Failure detected: Working directory drift detected: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app"
+      "Failure detected: Working directory drift detected: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
+      "Failure detected: Pipeline error: Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app"
     ],
     "next_steps": [
-      "Run resource finder, validate outputs, summarize, then run experiment runner"
+      "Gather papers, datasets, code, and literature review"
     ],
-    "cwd": "/app",
-    "notes": "Working directory drift detected: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
-    "last_updated": "2026-05-15T17:55:34.905765+00:00"
+    "cwd": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3",
+    "notes": "Pipeline error: Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
+    "last_updated": "2026-05-15T18:54:51.884752+00:00"
   },
   {
     "current_stage": "pipeline",
@@ -25,18 +28,21 @@
     "what_is_done": [
       "Workspace prepared",
       "Dispatching to multi-agent pipeline",
-      "Pipeline resumed with existing state"
+      "Pipeline resumed with existing state",
+      "Workspace reused for research run",
+      "Starting resource finder stage"
     ],
     "key_findings": [
       "Failure detected: Working directory drift detected: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
-      "Failure detected: Pipeline error: Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app"
+      "Failure detected: Pipeline error: Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
+      "Failure detected: Pipeline error: 'attempts'"
     ],
     "next_steps": [
-      "Run resource finder, validate outputs, summarize, then run experiment runner"
+      "Gather papers, datasets, code, and literature review"
     ],
     "cwd": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3",
-    "notes": "Pipeline error: Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
-    "last_updated": "2026-05-15T17:55:34.906907+00:00"
+    "notes": "Pipeline error: 'attempts'",
+    "last_updated": "2026-05-15T18:54:51.888840+00:00"
   },
   {
     "current_stage": "runner",
@@ -45,17 +51,20 @@
     "what_is_done": [
       "Workspace prepared",
       "Dispatching to multi-agent pipeline",
-      "Pipeline resumed with existing state"
+      "Pipeline resumed with existing state",
+      "Workspace reused for research run",
+      "Starting resource finder stage"
     ],
     "key_findings": [
       "Failure detected: Working directory drift detected: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
-      "Failure detected: Pipeline error: Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app"
+      "Failure detected: Pipeline error: Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
+      "Failure detected: Pipeline error: 'attempts'"
     ],
     "next_steps": [
-      "Run resource finder, validate outputs, summarize, then run experiment runner"
+      "Gather papers, datasets, code, and literature review"
     ],
     "cwd": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3",
-    "notes": "Pipeline error: Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app",
-    "last_updated": "2026-05-15T17:55:34.909375+00:00"
+    "notes": "Pipeline error: 'attempts'",
+    "last_updated": "2026-05-15T18:54:51.891785+00:00"
   }
 ]

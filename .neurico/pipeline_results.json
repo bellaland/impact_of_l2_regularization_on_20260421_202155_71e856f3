@@ -2,5 +2,5 @@
   "success": false,
   "stages": {},
   "work_dir": "/workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3",
-  "error": "Working directory drift before resource_finder/starting: expected /workspaces/impact_of_l2_regularization_on_20260421_202155_71e856f3, got /app"
+  "error": "'attempts'"
 }
