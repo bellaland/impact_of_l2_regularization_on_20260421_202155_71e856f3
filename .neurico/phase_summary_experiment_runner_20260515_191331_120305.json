@@ -1,0 +1,20 @@
+{
+  "stage": "experiment_runner",
+  "summary_text": "Experiment runner completed. Experimental artifacts and documentation were produced and summarized for final review.",
+  "key_findings": [
+    "Planning artifacts generated.",
+    "Research report generated.",
+    "Workspace README generated.",
+    "Results directory available.",
+    "Source code directory available."
+  ],
+  "decision_rationale": [
+    "Experimental artifacts were condensed into a final execution summary."
+  ],
+  "constraints_and_failures": [],
+  "next_steps": [
+    "Review final findings and reported limitations.",
+    "Prepare final publication or paper-writing stage."
+  ],
+  "top_k_candidates": []
+}

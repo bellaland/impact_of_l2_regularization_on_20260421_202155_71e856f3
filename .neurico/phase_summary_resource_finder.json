@@ -1,0 +1,52 @@
+{
+  "stage": "resource_finder",
+  "summary_text": "Resource finder completed. Resources were gathered, validated, and compressed into a prioritized handoff for experiment execution.",
+  "key_findings": [
+    "Literature review generated.",
+    "Resources catalog generated.",
+    "Paper directory available.",
+    "Dataset directory available.",
+    "Code directory available."
+  ],
+  "decision_rationale": [
+    "Top-K candidates selected to reduce exploration breadth in the next stage."
+  ],
+  "constraints_and_failures": [
+    "The helper reported that the local service at `localhost:8000` was unavailable, so manual search was used.",
+    "Revalidated on 2026-05-15: the local paper-finder helper still fell back because the service was unavailable, and web search against primary sources did not identify a more directly suitable small-tabular L2 paper than the included set.",
+    "Compute constraint: cpu_only",
+    "Time limit: 1800 seconds"
+  ],
+  "next_steps": [
+    "Review gathered resources before implementation.",
+    "Prioritize top-ranked resources for experiment design.",
+    "Use only the most promising directions as primary context for the next stage."
+  ],
+  "top_k_candidates": [
+    {
+      "text": "The Wine Quality artifact available from the direct CSV pull is larger than the target small-data regime, so it is kept only as an optional reference dataset.",
+      "type": "dataset",
+      "score": 3.7
+    },
+    {
+      "text": "Usefulness for designing reproducible experiments on small datasets.",
+      "type": "dataset",
+      "score": 3.4
+    },
+    {
+      "text": "No lightweight code repo was found that directly matches the planned small-tabular experiment design, so the cloned repos are methodological references rather than runnable baselines.",
+      "type": "code",
+      "score": 3.2
+    },
+    {
+      "text": "To address that mismatch, the workspace includes several small tabular benchmarks that are more appropriate for the hypothesis test.",
+      "type": "benchmark",
+      "score": 2.95
+    },
+    {
+      "text": "Priority was given to papers that were either foundational, directly relevant to small-data generalization, or important for correct optimizer implementation.",
+      "type": "paper",
+      "score": 2.9
+    }
+  ]
+}

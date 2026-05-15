@@ -53,6 +53,7 @@ See `code/README.md` for more detail.
 - The helper reported that the local service at `localhost:8000` was unavailable, so manual search was used.
 - Manual search focused on accessible primary paper sources: arXiv, NeurIPS proceedings, and OpenReview-linked materials.
 - Priority was given to papers that were either foundational, directly relevant to small-data generalization, or important for correct optimizer implementation.
+- Revalidated on 2026-05-15: the local paper-finder helper still fell back because the service was unavailable, and web search against primary sources did not identify a more directly suitable small-tabular L2 paper than the included set.
 
 ### Selection Criteria
 
@@ -66,6 +67,7 @@ See `code/README.md` for more detail.
 - The local paper-finder service was not running.
 - One initial PDF download pointed to the wrong NeurIPS paper and was removed during validation.
 - The Wine Quality artifact available from the direct CSV pull is larger than the target small-data regime, so it is kept only as an optional reference dataset.
+- Fresh environment setup was rerun on 2026-05-15 with `uv venv --clear` and `uv sync`; the workspace `.venv` contains the dependencies needed by the experiment runner.
 
 ### Gaps and Workarounds
 

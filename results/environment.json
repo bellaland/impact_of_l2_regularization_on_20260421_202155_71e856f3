@@ -1,6 +1,6 @@
 {
   "python_version": "3.12.8",
-  "platform": "Linux-6.12.54-linuxkit-x86_64-with-glibc2.35",
+  "platform": "Linux-6.12.54-linuxkit-aarch64-with-glibc2.35",
   "numpy_version": "2.4.4",
   "pandas_version": "3.0.2",
   "scikit_learn_version": "1.8.0",

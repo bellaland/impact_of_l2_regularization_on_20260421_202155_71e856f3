@@ -1,9 +1,9 @@
 # Report: Impact of L2 Regularization on Small Dataset Generalization
 
 ## 1. Executive Summary
-This study tested whether L2 regularization improves generalization for small tabular classification datasets with fewer than 1000 samples. Across four datasets and three random seeds per dataset, validation-tuned L2 logistic regression increased mean test accuracy from `0.8292` to `0.8385`, but that accuracy gain was not statistically significant in the paired aggregate analysis (`p = 0.345`). In contrast, L2 dramatically reduced the mean train-validation gap from `0.1297` to `0.0257`, and that reduction was statistically significant (`p = 0.011`, paired Cohen's `d = -0.878`).
+This study tested whether L2 regularization improves generalization for small tabular classification datasets with fewer than 1000 samples. Across four datasets and three random seeds per dataset, validation-tuned L2 logistic regression increased mean test accuracy from `0.8267` to `0.8385`, but that accuracy gain was not statistically significant in the paired aggregate analysis (`p = 0.205`). In contrast, L2 dramatically reduced the mean train-validation gap from `0.1297` to `0.0257`, and that reduction was statistically significant (`p = 0.011`, paired Cohen's `d = -0.878`).
 
-The practical implication is narrower than the initial hypothesis: on these small datasets, L2 was reliable as an anti-overfitting mechanism but not reliable as a universal accuracy booster. It reduced the generalization gap in `11/12` runs, while test accuracy improved in only `5/12` runs and worsened in `3/12`.
+The practical implication is narrower than the initial hypothesis: on these small datasets, L2 was reliable as an anti-overfitting mechanism but not reliable as a universal accuracy booster. It reduced the generalization gap in `11/12` runs, while test accuracy improved in only `5/12` runs, tied in `5/12`, and worsened in `2/12`.
 
 ## 2. Research Question & Motivation
 ### Research question
@@ -87,7 +87,7 @@ Paired `ttest_rel` compared L2 and baseline metrics across the 12 dataset-seed p
 - SciPy `1.17.1`
 - Matplotlib `3.10.8`
 - seaborn `0.13.2`
-- Final execution time: about `29s`
+- Latest validation execution time: about `8s`
 
 ## 5. Results
 ### Requested metrics output
@@ -95,7 +95,7 @@ The required JSON file `results/metrics.json` contains:
 
 ```json
 {
-  "baseline_test_acc": 0.8292108341163574,
+  "baseline_test_acc": 0.8266855815911048,
   "l2_test_acc": 0.8384884455015268,
   "baseline_train_val_gap": 0.12967718538627435,
   "l2_train_val_gap": 0.025704230868268108
@@ -106,27 +106,27 @@ The required JSON file `results/metrics.json` contains:
 
 | Metric | Baseline Mean | L2 Mean | Mean Difference (L2 - Baseline) | p-value |
 |---|---:|---:|---:|---:|
-| Test accuracy | 0.8292 | 0.8385 | +0.0093 | 0.345 |
-| Weighted F1 | 0.8276 | 0.8357 | +0.0081 | 0.431 |
+| Test accuracy | 0.8267 | 0.8385 | +0.0118 | 0.205 |
+| Weighted F1 | 0.8257 | 0.8357 | +0.0100 | 0.302 |
 | Train-validation gap | 0.1297 | 0.0257 | -0.1040 | 0.011 |
 
 Additional aggregate statistics from `results/statistical_tests.json`:
-- Accuracy: 95% CI `[-0.0114, 0.0300]`, paired Cohen's `d = 0.285`
-- Weighted F1: 95% CI `[-0.0138, 0.0301]`, paired Cohen's `d = 0.236`
+- Accuracy: 95% CI `[-0.0075, 0.0311]`, paired Cohen's `d = 0.389`
+- Weighted F1: 95% CI `[-0.0103, 0.0303]`, paired Cohen's `d = 0.312`
 - Train-validation gap: 95% CI `[-0.1792, -0.0287]`, paired Cohen's `d = -0.878`
 
 ### Per-dataset summary
 
 | Dataset | Dummy Acc | Baseline Acc | L2 Acc | Baseline Gap | L2 Gap | Median Best C |
 |---|---:|---:|---:|---:|---:|---:|
-| `sklearn_breast_cancer` | 0.500 | 0.946 | 0.977 | 0.027 | -0.011 | 0.10 |
-| `sklearn_wine` | 0.296 | 0.963 | 1.000 | 0.049 | 0.019 | 0.01 |
-| `uci_connectionist_bench_sonar` | 0.396 | 0.802 | 0.781 | 0.301 | 0.049 | 0.10 |
-| `uci_glass_identification` | 0.202 | 0.606 | 0.596 | 0.141 | 0.046 | 100.00 |
+| `sklearn_breast_cancer` | 0.558 | 0.946 | 0.977 | 0.027 | -0.011 | 0.10 |
+| `sklearn_wine` | 0.321 | 0.963 | 1.000 | 0.049 | 0.019 | 0.01 |
+| `uci_connectionist_bench_sonar` | 0.448 | 0.802 | 0.781 | 0.301 | 0.049 | 0.10 |
+| `uci_glass_identification` | 0.273 | 0.596 | 0.596 | 0.141 | 0.046 | 100.00 |
 
 Observed run-level pattern:
 - L2 improved test accuracy in `5/12` runs.
-- L2 matched the baseline in `4/12` runs.
+- L2 matched the baseline in `5/12` runs.
 - L2 reduced the train-validation gap in `11/12` runs.
 
 ### Figures
@@ -137,7 +137,7 @@ Observed run-level pattern:
 ### What the results show
 The strongest supported claim is that L2 regularization reduces overfitting on small datasets in this setup. The mean train-validation gap shrank by about `0.104`, and the paired test was significant at the preregistered `alpha = 0.05`. This is consistent with the classical role of L2 as a shrinkage-based variance control.
 
-The accuracy story is weaker. Mean test accuracy increased by only `0.0093`, with a 95% confidence interval crossing zero and a non-significant paired test. That means the experiment does not support the stronger claim that L2 reliably improves held-out predictive performance across small datasets in aggregate.
+The accuracy story is weaker. Mean test accuracy increased by only `0.0118`, with a 95% confidence interval crossing zero and a non-significant paired test. That means the experiment does not support the stronger claim that L2 reliably improves held-out predictive performance across small datasets in aggregate.
 
 ### Dataset-specific behavior
 - `sklearn_breast_cancer` showed the clearest practical win for L2, with both accuracy and weighted F1 improving substantially. The paired p-values are below `0.05`, but this rests on only three seeds and should be interpreted cautiously.

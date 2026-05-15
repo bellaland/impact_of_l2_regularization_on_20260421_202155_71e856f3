@@ -1,7 +1,7 @@
 \section{Results}
 \label{sec:results}
 
-\para{Aggregate comparison.} \Tabref{tab:aggregate-results} shows the main aggregate outcome. L2 increases mean test accuracy from $0.8292$ to $0.8385$, but the mean paired gain is only $+0.0093$ with a $95\%$ confidence interval of $[-0.0114, 0.0300]$ and $p=0.345$. Weighted F1 shows the same pattern: a small mean gain of $+0.0081$ with $p=0.431$. In contrast, the train-validation gap drops from $0.1297$ to $0.0257$, a mean paired change of $-0.1040$ with $p=0.011$ and paired Cohen's $d=-0.878$. This is the clearest statistically supported effect in the study.
+\para{Aggregate comparison.} \Tabref{tab:aggregate-results} shows the main aggregate outcome. L2 increases mean test accuracy from $0.8267$ to $0.8385$, but the mean paired gain is only $+0.0118$ with a $95\%$ confidence interval of $[-0.0075, 0.0311]$ and $p=0.205$. Weighted F1 shows the same pattern: a small mean gain of $+0.0100$ with $p=0.302$. In contrast, the train-validation gap drops from $0.1297$ to $0.0257$, a mean paired change of $-0.1040$ with $p=0.011$ and paired Cohen's $d=-0.878$. This is the clearest statistically supported effect in the study.
 
 \input{tables/aggregate_results}
 
@@ -9,7 +9,7 @@
 
 \input{tables/dataset_results}
 
-\para{How consistent is the overfitting reduction?} The run-level counts sharpen the interpretation. L2 improves test accuracy in $5/12$ runs, matches the baseline in $4/12$, and worsens it in $3/12$. By contrast, it reduces the train-validation gap in $11/12$ runs. The regularization effect is therefore far more stable for shrinkage and gap control than for final predictive accuracy.
+\para{How consistent is the overfitting reduction?} The run-level counts sharpen the interpretation. L2 improves test accuracy in $5/12$ runs, matches the baseline in $5/12$, and worsens it in $2/12$. By contrast, it reduces the train-validation gap in $11/12$ runs. The regularization effect is therefore far more stable for shrinkage and gap control than for final predictive accuracy.
 
 \para{Regularization sweep and shrinkage.} \Figref{fig:reg-summary} summarizes the validation sweep. The wine example shows that intermediate values of $C$ can reach perfect validation and test performance while keeping coefficients much smaller than the near-unregularized baseline. Across datasets, the selected median $C$ values vary from $0.01$ on \wine to $100$ on \glass, which reinforces that the best amount of regularization is data dependent rather than universal.
 

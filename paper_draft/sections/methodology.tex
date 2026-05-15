@@ -13,10 +13,10 @@
 \end{itemize}
 All logistic-regression runs use the \texttt{lbfgs} solver and \texttt{max\_iter=5000}.
 
-\para{Selection metric and evaluation metrics.} We choose the best L2 strength by validation weighted F1, then report test accuracy, weighted F1, train-validation accuracy gap, train-test accuracy gap, and coefficient $\normltwo$ norm. We focus especially on the train-validation gap because it gives a direct measure of overfitting under the same split protocol.
+\para{Selection metric and evaluation metrics.} We choose the best L2 strength by validation weighted F1, then report test accuracy, weighted F1, train-validation accuracy gap, train-test accuracy gap, and coefficient \normltwo norm. We focus especially on the train-validation gap because it gives a direct measure of overfitting under the same split protocol.
 
 \para{Statistical analysis.} We compare \ltwo against \baseline using paired \texttt{ttest\_rel} across the 12 dataset-seed pairs. For each aggregate metric, we report the mean paired difference, a $95\%$ confidence interval, paired Cohen's $d$, and a Shapiro--Wilk test on the paired differences as a descriptive assumption check. We treat per-dataset tests as descriptive because each one uses only three seeds.
 
-\para{Implementation details.} The experiment runs on CPU only and records \texttt{Python 3.12.8}, \texttt{NumPy 2.4.4}, \texttt{pandas 3.0.2}, \texttt{scikit-learn 1.8.0}, \texttt{SciPy 1.17.1}, \texttt{Matplotlib 3.10.8}, and \texttt{seaborn 0.13.2}. The full run takes about $29$ seconds. \Tabref{tab:datasets} summarizes the datasets, and the main quantitative comparisons appear in \tabref{tab:aggregate-results} and \tabref{tab:dataset-results}.
+\para{Implementation details.} The experiment runs on CPU only and records \texttt{Python 3.12.8}, \texttt{NumPy 2.4.4}, \texttt{pandas 3.0.2}, \texttt{scikit-learn 1.8.0}, \texttt{SciPy 1.17.1}, \texttt{Matplotlib 3.10.8}, and \texttt{seaborn 0.13.2}. The latest validation execution takes about $8$ seconds. \Tabref{tab:datasets} summarizes the datasets, and the main quantitative comparisons appear in \tabref{tab:aggregate-results} and \tabref{tab:dataset-results}.
 
 \input{tables/datasets}

@@ -1,79 +1,33 @@
 %%%%% PROJECT-SPECIFIC MACROS %%%%%
-% Define your project-specific terms here
 % Import with: \input{commands/macros}
-%
-% INSTRUCTIONS:
-% 1. Use \textsc{} for method/dataset/model names (small caps)
-% 2. Add \xspace at the end for automatic spacing
-% 3. Group related terms together
-% 4. Use consistent naming conventions
 
 \usepackage{xspace}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% METHOD NAMES
+% METHODS AND BASELINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcommand{\baseline}{\textsc{Baseline}\xspace}
 \newcommand{\ltwo}{\textsc{L2}\xspace}
-\newcommand{\dummy}{\textsc{Dummy}\xspace}
+\newcommand{\baseline}{\textsc{Near-Unregularized}\xspace}
+\newcommand{\dummy}{\textsc{Stratified Dummy}\xspace}
+\newcommand{\logreg}{\textsc{Logistic Regression}\xspace}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DATASET NAMES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\wine}{\textsc{Wine}\xspace}
-\newcommand{\breastcancer}{\textsc{BreastCancer}\xspace}
+\newcommand{\breastcancer}{\textsc{Breast Cancer}\xspace}
 \newcommand{\glass}{\textsc{Glass}\xspace}
 \newcommand{\sonar}{\textsc{Sonar}\xspace}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% MODEL NAMES
+% METRICS AND TERMS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% LLM and model names
-% Example: \newcommand{\gpt}{\textsc{GPT-4o-mini}\xspace}
-% Example: \newcommand{\llama}{\textsc{Llama-3.1-70B-Instruct}\xspace}
-% Example: \newcommand{\claude}{\textsc{Claude-3.5-Sonnet}\xspace}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% BASELINE NAMES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newcommand{\logreg}{\textsc{LogReg}\xspace}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ABBREVIATIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newcommand{\ie}{i.e.,\xspace}
+\newcommand{\acc}{\textsc{Accuracy}\xspace}
+\newcommand{\wf}{\textsc{Weighted F1}\xspace}
+\newcommand{\gap}{\textsc{Train-Val Gap}\xspace}
+\renewcommand{\normltwo}{$\ell_2$\xspace}
 \newcommand{\eg}{e.g.,\xspace}
-\newcommand{\etal}{et al.\xspace}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% DOMAIN-SPECIFIC TERMS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Terms specific to your research domain
-% Keep consistent formatting throughout the paper
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% USAGE EXAMPLES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% GOOD:
-%   \newcommand{\hypogenic}{\textsc{HypoGeniC}\xspace}
-%   Usage: "We propose \hypogenic to generate hypotheses."
-%   Result: "We propose HypoGeniC to generate hypotheses."
-%
-% GOOD:
-%   \newcommand{\ours}{{\bf HypoGeniC}\xspace}
-%   Usage: "Our method, \ours, outperforms baselines."
-%   Result: "Our method, HypoGeniC, outperforms baselines."
-%
-% BAD (no \xspace):
-%   \newcommand{\hypogenic}{\textsc{HypoGeniC}}
-%   Usage: "\hypogenic outperforms..."
-%   Result: "HypoGeniCoutperforms..." (missing space!)
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ie}{i.e.,\xspace}

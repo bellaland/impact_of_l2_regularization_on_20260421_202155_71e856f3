@@ -6,7 +6,7 @@
 ## Abstract
 - State the practical question for sub-1000-sample tabular classification.
 - Describe the repeated-seed logistic-regression comparison on four datasets.
-- Report the main quantitative outcomes: accuracy `0.8292 -> 0.8385` (`p=0.345`), train-validation gap `0.1297 -> 0.0257` (`p=0.011`).
+- Report the main quantitative outcomes: accuracy `0.8267 -> 0.8385` (`p=0.205`), train-validation gap `0.1297 -> 0.0257` (`p=0.011`).
 - Close with the practical implication: L2 is a dependable shrinkage tool, not a universal accuracy booster.
 
 ## Introduction

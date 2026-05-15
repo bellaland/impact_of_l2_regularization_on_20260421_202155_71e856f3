@@ -7,7 +7,7 @@ Classical theory motivates optimism. Weight decay prefers smaller-norm solutions
 
 We address that gap with a controlled benchmark on four classification datasets with fewer than 1000 samples. Our setup keeps the model family, preprocessing, solver, and split protocol fixed, and changes only the regularization strength. We compare a near-unregularized logistic regression baseline against a validation-tuned L2 logistic regression model, evaluate both on untouched test splits, and report both predictive metrics and direct overfitting indicators. This framing is intentionally modest: we do not ask whether L2 solves generalization in the abstract; we ask how much it changes accuracy, weighted F1, and train-validation gaps in a small-data tabular workflow.
 
-The answer is mixed. Across 12 dataset-seed pairs, L2 increases mean test accuracy by only $0.0093$ and weighted F1 by $0.0081$, with confidence intervals that cross zero. At the same time, it reduces the mean train-validation gap by $0.1040$ and does so in $11/12$ runs. This means the overfitting-control effect is strong and repeatable, while the accuracy effect is weaker and dataset-dependent.
+The answer is mixed. Across 12 dataset-seed pairs, L2 increases mean test accuracy by only $0.0118$ and weighted F1 by $0.0100$, with confidence intervals that cross zero. At the same time, it reduces the mean train-validation gap by $0.1040$ and does so in $11/12$ runs. This means the overfitting-control effect is strong and repeatable, while the accuracy effect is weaker and dataset-dependent.
 
 \para{What do we contribute?} We make four concrete contributions:
 \begin{itemize}[leftmargin=*,itemsep=0pt,topsep=2pt]
